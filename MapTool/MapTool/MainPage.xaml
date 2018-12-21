@@ -1,0 +1,61 @@
+﻿<Page
+    x:Class="MapTool.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MapTool"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:maps="using:Windows.UI.Xaml.Controls.Maps"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <local:VisibleIfTrueConverter x:Key="VisibleIfTrueConverter"/>
+        <local:CollapsedIfTrueConverter x:Key="CollapsedIfTrueConverter"/>
+
+        <DataTemplate x:Key="MenuItemTemplate" x:DataType="local:MenuItem">
+            <StackPanel Orientation="Horizontal" Padding="5 0">
+                <Button Content="{x:Bind Header}"  Visibility="{x:Bind IsActive,Converter={StaticResource VisibleIfTrueConverter}}" Click="MenuItem_Click"/>
+                <Button Content="{x:Bind Header}" Visibility="{x:Bind IsActive,Converter={StaticResource CollapsedIfTrueConverter}}">
+                    <Button.Flyout>
+                        <Flyout local:BindableFlyout.ItemsSource="{x:Bind SubMenuItems}">
+
+                            <local:BindableFlyout.ItemTemplate>
+
+                                <DataTemplate x:DataType="local:MenuItem">
+
+                                    <MenuFlyoutItem Text="{x:Bind Header}" Background="AliceBlue"   Click="MenuItem_Click"/>
+
+                                </DataTemplate>
+
+                            </local:BindableFlyout.ItemTemplate>
+
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <GridView  Grid.Row="0" ItemsSource="{x:Bind MenuItems}" ItemTemplate="{StaticResource MenuItemTemplate}">
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" />
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                    <Setter Property="Margin" Value="0" />
+                </Style>
+            </GridView.ItemContainerStyle>
+        </GridView>
+
+        <maps:MapControl x:Name="myMap" TransitFeaturesVisible="False" 
+                         Loaded="MyMap_Loaded" Grid.Row="1" />
+    </Grid>
+</Page>
